@@ -57,7 +57,16 @@
       try {
         const res = await fetch('/.netlify/functions/generateChapter', { method: 'POST' });
         const data = await res.json();
-        displayChapter(data.chapter);
+        const chapterData = Array.isArray(data.chapter)
+          ? data.chapter
+          : Array.isArray(data.chapter.chapter)
+            ? data.chapter.chapter
+            : null;
+        if (chapterData) {
+          displayChapter(chapterData);
+        } else {
+          storyDiv.innerHTML = "Unexpected chapter format.";
+        }
       } catch (err) { storyDiv.innerHTML = 'Error generating chapter.'; }
     });
     function displayChapter(chapter) {
