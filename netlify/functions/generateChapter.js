@@ -1,5 +1,7 @@
 export async function handler(event, context) {
-  const prompt = `Generate a chapter in Korean for beginner learners inspired by real Korean stories. The chapter should contain 4-8 sentences. Each sentence must be an array of objects where each object has a "word" key and a "tooltip" key containing an English definition of the word. Return valid JSON.`;
+  const systemPrompt = `You are a helpful assistant generating beginner-friendly Korean stories. You must output the chapter as valid JSON in the following format with no extra text: [[{"word": "가을", "tooltip": "autumn"}, ...], ...].`;
+  
+  const userPrompt = `Generate a chapter in Korean for beginner learners inspired by real Korean stories. The chapter should contain 4-8 sentences. Each sentence must be an array of objects where each object has a "word" key and a "tooltip" key containing an English definition of the word. Return valid JSON.`;
 
   try {
     const apiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -10,12 +12,14 @@ export async function handler(event, context) {
       },
       body: JSON.stringify({
         model: "gpt-3.5-turbo",
-        messages: [{ role: "user", content: prompt }]
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt }
+        ]
       })
     });
     
     const result = await apiResponse.json();
-    // Assume the response is a valid JSON chapter (as a string) that we parse here.
     const chapter = JSON.parse(result.choices[0].message.content);
     
     return { statusCode: 200, body: JSON.stringify({ chapter }) };
