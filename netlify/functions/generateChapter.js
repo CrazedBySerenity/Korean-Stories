@@ -1,5 +1,3 @@
-const fetch = import('node-fetch');
-
 export async function handler(event, context) {
   const prompt = `Generate a chapter in Korean for beginner learners inspired by real Korean stories. The chapter should contain 4-8 sentences. Each sentence must be an array of objects where each object has a "word" key and a "tooltip" key containing an English definition of the word. Return valid JSON.`;
 
